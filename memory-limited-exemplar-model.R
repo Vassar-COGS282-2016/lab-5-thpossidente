@@ -35,19 +35,15 @@ sample.training.data <- data.frame(x=c(0.5,0.6), y=c(0.4,0.3), category=c(1,2))
 
 exemplar.memory.limited <- function(training.data, x.val, y.val, target.category, sensitivity, decay.rate){
   
-  if(is.null(training.data) == TRUE){
-    return(0.5)
-  }
+  if(is.null(training.data) == TRUE){return(0.5)}
+  
   training.data$recency <- seq((nrow(training.data)-1):0)
   training.data$weight <- sapply(training.data$recency, function(recency){
     weights <- 1*decay.rate^trial.number
-    return(weights)
-  })
+    return(weights)})
     
   td <- training.data
-  td$distance <- mapply(function(x,y){
-    return(sqrt( a*(x-x.stim)^2 + (1-a)*(y-y.stim)^2 ))
-  }, td$x, td$y)
+  td$distance <- mapply(function(x,y){return(sqrt(a*(x-x.stim)^2 + (1-a)*(y-y.stim)^2 ))}, td$x, td$y)
     
   td$similarity <- exp(-sensitivity*td$distance)
     
@@ -60,18 +56,10 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
   target.category.subset <- subset(training.data, category == target.category, select = mem.weighted.similarity, drop = F)
   
   probability <- ((sum(target.category.subset))/total.sim)
-  if(probability == 0){
-    return(0.000000000001)}
+  if(probability == 0){return(0.000000000001)}
   
   return(probability)
 }
-
-experiment.data <- data.frame(read.csv("experiment-data.csv", header = T))
-exemplar.memory.limited(experiment.data)
-
-
-## for first trial, 50/50 chance of guessing correct. for all other, training data is all trials before it
-## never have model predict 0 probability
 
 
 # Once you have the model implemented, write the log-likelihood function for a set of data.
@@ -97,5 +85,11 @@ sample.data.set[4,]
 # Don't forget that decay rate should be between 0 and 1, and that sensitivity should be > 0.
 
 exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
-  return(NA)
+  
+  if(decay.rate > 1 | decay.rate < 0){return(NA)}
+  
+  if(sensitivity < 0){ return(NA)}
+   
+  
+  return(exemplar.memory.limited(all.data, sensitivity, decay.rate))
 }
