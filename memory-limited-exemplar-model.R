@@ -36,7 +36,7 @@ sample.training.data <- data.frame(x=c(0.5,0.6), y=c(0.4,0.3), category=c(1,2))
 exemplar.memory.limited <- function(training.data, x.val, y.val, target.category, sensitivity, decay.rate){
   
   training.data$recency <- seq((nrow(training.data)-1):0)
-  training.data$weight <- sapply(training.data$recency, function(trial.number){
+  training.data$weight <- sapply(training.data$recency, function(recency){
     weights <- 1*decay.rate^trial.number
     return(weights)
   })
@@ -50,20 +50,36 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
     
   mem.weighted.similarity <- td$similarity*training.data$weight
   
+  
+  
   total.sim <- sum(mem.weighted.similarity)
   
+  
+  sum.category1 <- 0
   if(target.category == 1){
-    sum.category1 <- 
+    sum.category1 <- sum.category1 + mem.weighted.similarity
   }
+  sum1 <- return(sum.category1)
+  return(predicted.probability.category1 <- sum1/total.sim)
   
   
-  return()
+  
+  
+  sum.category2 <- 0
+  if(target.category == 2){
+    sum.category2 <- sum.category2 + mem.weighted.similarity
+  }
+  sum2 <- return(sum.category2)
+  return(predicted.probability.category2 <- sum2/total.sim)
+  
   
 }
 
 
+
+
 ## for first trial, 50/50 chance of guessing correct. for all other, training data is all trials before it
-## never have probability = 0
+## never have model predict 0 probability
 
 
 # Once you have the model implemented, write the log-likelihood function for a set of data.
