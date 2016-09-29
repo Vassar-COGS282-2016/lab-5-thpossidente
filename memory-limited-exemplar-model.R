@@ -57,8 +57,9 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
   
   sum.category1 <- 0
   if(target.category == 1){
-    sum.category1 <- sum.category1 + mem.weighted.similarity
-  }
+    for(training.data$category == 1){
+      sum.category1 <- sum.category1 + mem.weighted.similarity
+  }}
   sum1 <- return(sum.category1)
   return(predicted.probability.category1 <- sum1/total.sim)
   
@@ -67,6 +68,7 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
   
   sum.category2 <- 0
   if(target.category == 2){
+    for(training.data$category == 2){
     sum.category2 <- sum.category2 + mem.weighted.similarity
   }
   sum2 <- return(sum.category2)
