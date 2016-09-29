@@ -34,8 +34,37 @@
 sample.training.data <- data.frame(x=c(0.5,0.6), y=c(0.4,0.3), category=c(1,2))
 
 exemplar.memory.limited <- function(training.data, x.val, y.val, target.category, sensitivity, decay.rate){
-  return(NA)
+  
+  training.data$recency <- seq((nrow(training.data)-1):0)
+  training.data$weight <- sapply(training.data$recency, function(trial.number){
+    weights <- 1*decay.rate^trial.number
+    return(weights)
+  })
+    
+  td <- training.data
+  td$distance <- mapply(function(x,y){
+    return(sqrt( a*(x-x.stim)^2 + (1-a)*(y-y.stim)^2 ))
+  }, td$x, td$y)
+    
+  td$similarity <- exp(-sensitivity*td$distance)
+    
+  mem.weighted.similarity <- td$similarity*training.data$weight
+  
+  total.sim <- sum(mem.weighted.similarity)
+  
+  if(target.category == 1){
+    sum.category1 <- 
+  }
+  
+  
+  return()
+  
 }
+
+
+## for first trial, 50/50 chance of guessing correct. for all other, training data is all trials before it
+## never have probability = 0
+
 
 # Once you have the model implemented, write the log-likelihood function for a set of data.
 # The set of data for the model will look like this:
