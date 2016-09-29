@@ -35,6 +35,9 @@ sample.training.data <- data.frame(x=c(0.5,0.6), y=c(0.4,0.3), category=c(1,2))
 
 exemplar.memory.limited <- function(training.data, x.val, y.val, target.category, sensitivity, decay.rate){
   
+  if(is.null(training.data) == TRUE){
+    return(0.5)
+  }
   training.data$recency <- seq((nrow(training.data)-1):0)
   training.data$weight <- sapply(training.data$recency, function(recency){
     weights <- 1*decay.rate^trial.number
@@ -48,37 +51,23 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
     
   td$similarity <- exp(-sensitivity*td$distance)
     
-  mem.weighted.similarity <- td$similarity*training.data$weight
+  td$mem.weighted.similarity <- td$similarity*training.data$weight
   
   
   
   total.sim <- sum(mem.weighted.similarity)
   
+  target.category.subset <- subset(training.data, category == target.category, select = mem.weighted.similarity, drop = F)
   
-  sum.category1 <- 0
-  if(target.category == 1){
-    for(training.data$category == 1){
-      sum.category1 <- sum.category1 + mem.weighted.similarity
-  }
-  sum1 <- return(sum.category1)
-  return(predicted.probability.category1 <- sum1/total.sim)}
+  probability <- ((sum(target.category.subset))/total.sim)
+  if(probability == 0){
+    return(0.000000000001)}
   
-  
-  
-  
-  sum.category2 <- 0
-  if(target.category == 2){
-    for(training.data$category == 2){
-    sum.category2 <- sum.category2 + mem.weighted.similarity
-  }
-  sum2 <- return(sum.category2)
-  return(predicted.probability.category2 <- sum2/total.sim)
-  }
-  
-  
+  return(probability)
 }
 
-
+experiment.data <- data.frame(read.csv("experiment-data.csv", header = T))
+exemplar.memory.limited(experiment.data)
 
 
 ## for first trial, 50/50 chance of guessing correct. for all other, training data is all trials before it
