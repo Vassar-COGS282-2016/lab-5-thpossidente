@@ -89,7 +89,11 @@ exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
   if(decay.rate > 1 | decay.rate < 0){return(NA)}
   
   if(sensitivity < 0){ return(NA)}
-   
+
+  
+  for(all.data[x,]){
+    
+  }
   
   return(exemplar.memory.limited(all.data, sensitivity, decay.rate))
 }
