@@ -84,7 +84,11 @@ sample.data.set[4,]
 
 # Don't forget that decay rate should be between 0 and 1, and that sensitivity should be > 0.
 
-exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
+exemplar.memory.log.likelihood <- function(parameters){
+  
+  sensitivity <- parameters[1]
+  decay.rate <- parameters[2]
+  
   
   if(decay.rate > 1 | decay.rate < 0){return(NA)}
   
@@ -100,3 +104,5 @@ exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
   
   return(sum(-log(likelihood)))
 }
+
+
