@@ -91,9 +91,12 @@ exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
   if(sensitivity < 0){ return(NA)}
 
   
-  for(all.data[x,]){
+  lieklihood <- for(x in all.data){
+    if(all.data[x,]$correct == T){
+    return(exemplar.memory.limited(all.data[0:x], all.data[x,]$x, all.data[x,]$y, all.data[x,]$category, sensitivity, decay.rate))}
     
-  }
+    if(all.data[x,]$correct == F){
+      return(1-(exemplar.memory.limited(all.data[0:x], all.data[x,]$x, all.data[x,]$y, all.data[x,]$category, sensitivity, decay.rate)))}}
   
-  return(exemplar.memory.limited(all.data, sensitivity, decay.rate))
+  return(sum(-log(likelihood)))
 }
