@@ -39,7 +39,7 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
   
   training.data$recency <- seq((nrow(training.data)-1):0)
   training.data$weight <- sapply(training.data$recency, function(recency){
-    weights <- 1*decay.rate^trial.number
+    weights <- 1*decay.rate^recency
     return(weights)})
     
   td <- training.data
@@ -95,7 +95,7 @@ exemplar.memory.log.likelihood <- function(parameters){
   if(sensitivity < 0){ return(NA)}
 
   
-  lieklihood <- for(x in all.data){
+  lieklihood <- for(x in 1:nrow(all.data)){
     if(all.data[x,]$correct == T){
     return(exemplar.memory.limited(all.data[0:x], all.data[x,]$x, all.data[x,]$y, all.data[x,]$category, sensitivity, decay.rate))}
     
@@ -104,5 +104,8 @@ exemplar.memory.log.likelihood <- function(parameters){
   
   return(sum(-log(likelihood)))
 }
+
+
+
 
 
