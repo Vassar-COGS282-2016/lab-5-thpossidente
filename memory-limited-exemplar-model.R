@@ -43,7 +43,7 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
     return(weights)})
     
   td <- training.data
-  td$distance <- mapply(function(x,y){return(sqrt(a*(x-x.stim)^2 + (1-a)*(y-y.stim)^2 ))}, td$x, td$y)
+  td$distance <- mapply(function(x,y){return(sqrt(a*(x-x.val)^2 + (1-a)*(y-y.val)^2 ))}, td$x, td$y)
     
   td$similarity <- exp(-sensitivity*td$distance)
     
