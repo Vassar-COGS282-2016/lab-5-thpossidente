@@ -35,19 +35,21 @@ sample.training.data <- data.frame(x=c(0.5,0.6), y=c(0.4,0.3), category=c(1,2))
 
 exemplar.memory.limited <- function(training.data, x.val, y.val, target.category, sensitivity, decay.rate){
   
-  if(is.null(training.data) == TRUE){return(0.5)}
+  if(nrow(training.data) == 0){return(0.5)}
   
-  training.data$recency <- seq((nrow(training.data)-1):0)
+  training.data$recency <- (nrow(training.data)-1):0
   training.data$weight <- sapply(training.data$recency, function(recency){
     weights <- 1*decay.rate^recency
     return(weights)})
     
   td <- training.data
-  td$distance <- mapply(function(x,y){return(sqrt(a*(x-x.val)^2 + (1-a)*(y-y.val)^2 ))}, td$x, td$y)##Error in mapply(function(x, y) { : 
+  td$distance <- mapply(function(x,y){
+    return(sqrt((x-x.val)^2 + (y-y.val)^2 ))
+  }, td$x, td$y)##Error in mapply(function(x, y) { : 
   ####zero-length inputs cannot be mixed with those of non-zero length
-  Called from: mapply(function(x, y) {
-    return(sqrt(a * (x - x.val)^2 + (1 - a) * (y - y.val)^2))
-  }, td$x, td$y)
+  # Called from: mapply(function(x, y) {
+  #   return(sqrt(a * (x - x.val)^2 + (1 - a) * (y - y.val)^2))
+  # }, td$x, td$y)
     
   td$similarity <- exp(-sensitivity*td$distance)
     
@@ -55,9 +57,9 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
   
   
   
-  total.sim <- sum(mem.weighted.similarity)
+  total.sim <- sum(td$mem.weighted.similarity)
   
-  target.category.subset <- subset(training.data, category == target.category, select = mem.weighted.similarity, drop = F)
+  target.category.subset <- subset(td, category == target.category)$mem.weighted.similarity
   
   probability <- ((sum(target.category.subset))/total.sim)
   if(probability == 0){return(0.000000000001)}
@@ -65,6 +67,7 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
   return(probability)
 }
 
+exemplar.memory.limited(sample.training.data, 0.55, 0.35, 1, 0.5, 0.9)
 
 # Once you have the model implemented, write the log-likelihood function for a set of data.
 # The set of data for the model will look like this:
@@ -88,23 +91,17 @@ sample.data.set[4,]
 
 # Don't forget that decay rate should be between 0 and 1, and that sensitivity should be > 0.
 
-exemplar.memory.log.likelihood <- function(parameters){
+exemplar.memory.log.likelihood <- function(all.data, sensitivity, decay.rate){
   
-  sensitivity <- parameters[1]
-  decay.rate <- parameters[2]
-  
-  
-  if(decay.rate > 1 | decay.rate < 0){return(NA)}
-  
-  if(sensitivity < 0){ return(NA)}
-
-  
-  lieklihood <- for(x in 1:nrow(all.data)){
+  likelihood <- sapply(1:nrow(all.data), function(x){
     if(all.data[x,]$correct == T){
-    return(exemplar.memory.limited(all.data[0:x], all.data[x,]$x, all.data[x,]$y, all.data[x,]$category, sensitivity, decay.rate))}
+      return(exemplar.memory.limited(all.data[0:(x-1),], all.data[x,]$x, all.data[x,]$y, all.data[x,]$category, sensitivity, decay.rate))
+    }
     
     if(all.data[x,]$correct == F){
-      return(1-(exemplar.memory.limited(all.data[0:x], all.data[x,]$x, all.data[x,]$y, all.data[x,]$category, sensitivity, decay.rate)))}}
+      return(1-(exemplar.memory.limited(all.data[0:(x-1),], all.data[x,]$x, all.data[x,]$y, all.data[x,]$category, sensitivity, decay.rate)))
+    }
+  })
   
   return(sum(-log(likelihood)))
 }

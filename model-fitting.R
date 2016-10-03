@@ -7,7 +7,18 @@ rm(sample.training.data)
 # Note: In optim() you can tell it to display updates as it goes with:
 # optim( ... , control=list(trace=4))
 
-fit <- optim(c(0.5,0.5), exemplar.memory.log.likelihood, method="Nelder-Mead", control=list(trace=4))
+exemplar.optim <- function(parameters){
+  sensitivity <- parameters[1]
+  decay.rate <- parameters[2]
+  
+  if(decay.rate > 1 || decay.rate < 0){return(NA)}
+  
+  if(sensitivity < 0){ return(NA)}
+  
+  return(exemplar.memory.log.likelihood(all.data, sensitivity, decay.rate))
+}
+
+fit <- optim(c(0.5,0.5), exemplar.optim, method="Nelder-Mead", control=list(trace=4))
 
 # Now try fitting a restricted version of the model, where we assume there is no decay.
 # Fix the decay.rate parameter to 1, and use optim to fit the sensitivity parameter.
