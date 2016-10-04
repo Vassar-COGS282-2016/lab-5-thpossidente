@@ -53,10 +53,11 @@ fit$value
 
 # What's the AIC and BIC for both models? Which model should we prefer?
 
-##For model with memory decay: AIC =  379.197, BIC = 770.8232
-##For model with fixed decay: AIC = 499.0322, BIC = 
+##For model with memory decay: AIC =  379.197, BIC = 387.6262
+##For model with fixed decay: AIC = 499.0322, BIC = 503.2468
 
-(-2 * -248.5161) + (log(500))
+##We should prefer the likelihood model with memory decay
+
 
 #### BONUS...
 # If you complete this part I'll refund you a late day. You do not need to do this.

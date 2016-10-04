@@ -45,12 +45,8 @@ exemplar.memory.limited <- function(training.data, x.val, y.val, target.category
   td <- training.data
   td$distance <- mapply(function(x,y){
     return(sqrt((x-x.val)^2 + (y-y.val)^2 ))
-  }, td$x, td$y)##Error in mapply(function(x, y) { : 
-  ####zero-length inputs cannot be mixed with those of non-zero length
-  # Called from: mapply(function(x, y) {
-  #   return(sqrt(a * (x - x.val)^2 + (1 - a) * (y - y.val)^2))
-  # }, td$x, td$y)
-    
+  }, td$x, td$y)
+  
   td$similarity <- exp(-sensitivity*td$distance)
     
   td$mem.weighted.similarity <- td$similarity*training.data$weight
