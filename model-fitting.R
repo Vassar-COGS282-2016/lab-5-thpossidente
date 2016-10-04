@@ -20,16 +20,43 @@ exemplar.optim <- function(parameters){
 
 fit <- optim(c(0.5,0.5), exemplar.optim, method="Nelder-Mead", control=list(trace=4))
 
+fit$par # sensitivity = 5.1536900, decay.rate = 0.6272777
+fit$value
+
 # Now try fitting a restricted version of the model, where we assume there is no decay.
 # Fix the decay.rate parameter to 1, and use optim to fit the sensitivity parameter.
 # Note that you will need to use method="Brent" in optim() instead of Nelder-Mead. 
 # The brent method also requires an upper and lower boundary:
 # optim( ..., upper=100, lower=0, method="Brent")
 
+exemplar.optim <- function(sensitivity){
+  
+  decay.rate <- 1
+  
+  if(sensitivity < 0){ return(NA)}
+  
+  return(exemplar.memory.log.likelihood(all.data, sensitivity, decay.rate))
+}
+
+fit <- optim(c(0.5), exemplar.optim, upper=100, lower=0, method="Brent", control=list(trace=4))
+
+fit$par # sensitivity = 3.862599
+fit$value
+
+
+
 # What's the log likelihood of both models? (see the $value in the result of optiom(),
 # remember this is the negative log likeihood, so multiply by -1.
 
+## Log likelihood for model with memory decay: 187.5985
+## Log likelihood for model with fixed decay: 248.5161
+
 # What's the AIC and BIC for both models? Which model should we prefer?
+
+##For model with memory decay: AIC =  379.197, BIC = 770.8232
+##For model with fixed decay: AIC = 499.0322, BIC = 
+
+(-2 * -248.5161) + (log(500))
 
 #### BONUS...
 # If you complete this part I'll refund you a late day. You do not need to do this.
